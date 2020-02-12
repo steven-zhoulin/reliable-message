@@ -1,0 +1,20 @@
+server.port: 56081
+spring.application.name: reliable-message-bank1
+server.servlet.context-path: /bank1
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bank1?useUnicode=true
+    username: root
+    password: mysql
+
+rocketmq:
+  producer.group: producer_bank1
+  name-server: 127.0.0.1:9876
+
+logging:
+  level:
+    root: info
+    org.springframework.web: info
+    com.topsail: debug

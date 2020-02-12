@@ -1,0 +1,103 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.12.RELEASE'
+        springCloudVersion = 'Greenwich.RELEASE'
+        springCloudAlibabaVersion = '2.1.1.RELEASE'
+    }
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    }
+    dependencies {
+        /* 添加插件依赖路径（通过jar方式） */
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}" as Object)
+    }
+}
+
+/* 所有子项目的通用配置 */
+subprojects {
+    /* 使用二进制插件 */
+
+    /* java是Gradle的核心插件，是内置的，内置插件不需要配置依赖路径 */
+    apply plugin: 'java'
+
+    /* 同上  让Gradle自动生成Intellij的项目文件*/
+    apply plugin: 'idea'
+
+    /* 注意gradle插件不再自动应用，所以这里需要指定 */
+    apply plugin: 'org.springframework.boot'
+
+    /* 依赖管理插件仍然是一个spring-boot-gradle-plugin传递依赖，所以无需在build.gradle配置中明确列出此依赖。 */
+    apply plugin: 'io.spring.dependency-management' /* 依赖管理，用来传递spring的依赖 */
+
+    group = 'com.topsail'
+
+    /* 项目版本 */
+    version = '1.0.0'
+
+    /* 指定jdk版本 */
+    sourceCompatibility = '1.8'
+
+    /* java编译的时候缺省状态下会因为中文字符而失败 */
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    repositories {
+        mavenLocal()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven {
+            url "https://repo.rdc.aliyun.com/repository/37567-snapshot-6lvzI4"
+            credentials {
+                username 'W26mrV'
+                password 'DnvYmR5Jd2'
+            }
+        }
+        mavenCentral()
+        dependencyManagement {
+
+            imports {
+                mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+                mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springCloudAlibabaVersion}"
+            }
+
+            resolutionStrategy {
+                cacheChangingModulesFor 0, 'seconds'
+            }
+        }
+    }
+
+    /* 添加通用依赖 */
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-configuration-processor'
+        implementation 'com.alibaba.cloud:spring-cloud-starter-stream-rocketmq'
+        implementation 'javax.interceptor:javax.interceptor-api'
+
+
+        implementation 'com.baomidou:mybatis-plus-boot-starter:3.3.0'
+        implementation 'com.baomidou:mybatis-plus:3.3.0'
+
+        implementation 'commons-io:commons-io:2.6'
+        implementation 'commons-codec:commons-codec:1.13'
+        implementation 'org.apache.commons:commons-lang3:3.8.1'
+        implementation 'org.apache.commons:commons-text:1.8'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1'
+
+        // 运行期有效
+        runtimeOnly 'mysql:mysql-connector-java'
+
+
+
+        // 编译期有效，不参与打包
+        annotationProcessor 'org.projectlombok:lombok:1.18.10'
+        compileOnly 'org.projectlombok:lombok:1.18.10'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.10'
+        testCompileOnly 'org.projectlombok:lombok:1.18.10'
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'com.baomidou:mybatis-plus-generator:3.3.0'
+        testImplementation 'org.freemarker:freemarker:2.3.29'
+
+    }
+}

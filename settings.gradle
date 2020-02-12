@@ -1,0 +1,11 @@
+rootProject.name = "reliable-message"
+
+include(":bank1")
+project(":bank1").projectDir = "${rootDir}/bank1" as File
+
+include(":bank2")
+project(":bank2").projectDir = "${rootDir}/bank2" as File
+
+include 'bank1'
+include 'bank2'
+
