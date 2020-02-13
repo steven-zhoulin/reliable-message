@@ -51,9 +51,11 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
             accountService.doUpdateAccountBalance(accountChangeEvent);
 
             // 当返回 RocketMQLocalTransactionState.COMMIT，自动向 MQ 发送 commit 消息，MQ 将消息的状态改为可消费
+            log.info("本地事务处理成功，向 MQ 发送 commit 指令！");
             return RocketMQLocalTransactionState.COMMIT;
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("本地事务处理失败，向 MQ 发送 rollback 指令！");
             return RocketMQLocalTransactionState.ROLLBACK;
         }
     }
@@ -67,6 +69,8 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
     @Override
     public RocketMQLocalTransactionState checkLocalTransaction(Message message) {
 
+        log.info("反查发送端本地事务是否提交...");
+
         String messageString = new String((byte[]) message.getPayload());
         JSONObject jsonObject = JSONObject.parseObject(messageString);
         String accountChangeString = jsonObject.getString("accountChange");
@@ -75,9 +79,11 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
 
         String transactionId = accountChangeEvent.getTransactionId();
         if (deDuplicateService.isExistTx(transactionId)) {
+            log.info("调用端事务已提交，确认提交消息！");
             return RocketMQLocalTransactionState.COMMIT;
         } else {
-            return RocketMQLocalTransactionState.UNKNOWN;
+            log.info("调用端事务未提交，不提交消息！");
+            return RocketMQLocalTransactionState.ROLLBACK;
         }
     }
 

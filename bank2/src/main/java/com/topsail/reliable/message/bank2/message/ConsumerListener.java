@@ -29,7 +29,7 @@ public class ConsumerListener implements RocketMQListener<String> {
     @Override
     public void onMessage(String message) {
 
-        log.info("开始消费消息:{}", message);
+        log.info("开始消费消息: {}", message);
 
         // 解析消息
         JSONObject jsonObject = JSONObject.parseObject(message);

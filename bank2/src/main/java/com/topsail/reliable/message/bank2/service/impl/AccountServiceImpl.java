@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Steven
  * @date 2020-02-12
@@ -46,7 +48,11 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         accountMapper.updateAccountBalance(accountChangeEvent.getAccountNo(), accountChangeEvent.getAmount());
 
         // 添加事务记录，用于幂等
-        deDuplicateService.save(DeDuplicate.builder().transactionId(accountChangeEvent.getTransactionId()).build());
+        DeDuplicate deDuplicate = DeDuplicate.builder()
+            .transactionId(accountChangeEvent.getTransactionId())
+            .createTime(LocalDateTime.now())
+            .build();
+        deDuplicateService.save(deDuplicate);
         if (accountChangeEvent.getAmount() == 4) {
             throw new RuntimeException("人为制造异常");
         }

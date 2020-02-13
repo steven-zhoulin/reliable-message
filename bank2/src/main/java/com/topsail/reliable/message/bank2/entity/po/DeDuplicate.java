@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_duplication")
+@TableName("de_duplicate")
 public class DeDuplicate {
 
     /**

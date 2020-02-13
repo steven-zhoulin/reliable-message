@@ -9,6 +9,7 @@ import com.topsail.reliable.message.bank1.mapper.AccountMapper;
 import com.topsail.reliable.message.bank1.service.AccountService;
 import com.topsail.reliable.message.bank1.service.DeDuplicateService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -16,6 +17,8 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 /**
  * @author Steven
@@ -54,7 +57,9 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
          * Message<?> message, 消息内容
          * Object arg 参数
          */
-        rocketMQTemplate.sendMessageInTransaction("producer_group_txmsg_bank1", "topic_txmsg", message, null);
+        TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction("producer_group_txmsg_bank1", "topic_txmsg", message, null);
+        String msgId = transactionSendResult.getMsgId();
+        log.info("msgId: {}", msgId);
 
     }
 
@@ -67,6 +72,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
     public void doUpdateAccountBalance(AccountChangeEvent accountChangeEvent) {
 
+        log.info("异步调用方，处理本地事务...");
+
         // 幂等判断
         if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {
             return;
@@ -74,8 +81,13 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         // 扣减金额
         accountMapper.updateAccountBalance(accountChangeEvent.getAccountNo(), accountChangeEvent.getAmount() * -1);
-        //添加事务日志
-        deDuplicateService.save(DeDuplicate.builder().transactionId(accountChangeEvent.getTransactionId()).build());
+
+        log.info("添加事务日志");
+        DeDuplicate deDuplicate = DeDuplicate.builder()
+            .transactionId(accountChangeEvent.getTransactionId())
+            .createTime(LocalDateTime.now())
+            .build();
+        deDuplicateService.save(deDuplicate);
         if (accountChangeEvent.getAmount() == 3) {
             throw new RuntimeException("人为制造异常");
         }
