@@ -71,7 +71,7 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-configuration-processor'
         implementation 'com.alibaba.cloud:spring-cloud-starter-stream-rocketmq'
-        implementation 'javax.interceptor:javax.interceptor-api'
+        //implementation 'javax.interceptor:javax.interceptor-api'
 
 
         implementation 'com.baomidou:mybatis-plus-boot-starter:3.3.0'

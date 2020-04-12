@@ -62,7 +62,6 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
 
     /**
      * 反查发送端本地事务是否提交（针对 Half-消息 长期未确认的情况）
-     *
      * @param message
      * @return
      */
