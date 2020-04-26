@@ -3,6 +3,7 @@ package com.topsail.reliable.message.bank1.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.topsail.reliable.message.bank1.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.bank1.entity.po.Account;
+import org.springframework.messaging.Message;
 
 /**
  * @author Steven
@@ -23,5 +24,12 @@ public interface AccountService extends IService<Account> {
      * @param accountChangeEvent
      */
     void doUpdateAccountBalance(AccountChangeEvent accountChangeEvent);
+
+    /**
+     * 执行本地事务
+     * @param message
+     * @param o
+     */
+    void doExecuteLocalTransaction(Message message, Object o);
 
 }

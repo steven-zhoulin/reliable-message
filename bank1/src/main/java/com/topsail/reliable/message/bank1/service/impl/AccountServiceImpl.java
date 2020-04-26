@@ -93,4 +93,25 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         }
     }
 
+    /**
+     * 执行本地事务
+     *
+     * @param message
+     * @param o
+     */
+    @Override
+    @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
+    public void doExecuteLocalTransaction(Message message, Object o) {
+        String messageString = new String((byte[]) message.getPayload());
+        JSONObject jsonObject = JSONObject.parseObject(messageString);
+        String accountChangeString = jsonObject.getString("accountChange");
+
+        // 将accountChange（json）转成AccountChangeEvent
+        AccountChangeEvent accountChangeEvent = JSONObject.parseObject(accountChangeString, AccountChangeEvent.class);
+
+        // 执行本地事务，扣减金额
+        this.doUpdateAccountBalance(accountChangeEvent);
+        int i = 10 / 0;
+    }
+
 }

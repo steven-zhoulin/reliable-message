@@ -10,11 +10,12 @@ spring:
     password: 1q1w1e1r
 
 rocketmq:
+  name-server: 10.13.3.13:9876
   producer.group: producer_bank1
-  name-server: 192.168.37.133:9876
 
 logging:
   level:
     root: info
     org.springframework.web: info
     com.topsail: debug
+    org.springframework.jdbc.datasource: debug

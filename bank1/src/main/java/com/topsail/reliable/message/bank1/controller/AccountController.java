@@ -21,6 +21,12 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    /**
+     * 转账
+     * @param accountId
+     * @param amount
+     * @return
+     */
     @GetMapping(value = "/transfer")
     public String transfer(@RequestParam("accountId") String accountId, @RequestParam("amount") Long amount) {
 
