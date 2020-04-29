@@ -37,4 +37,10 @@ public class AccountController {
         accountService.asyncUpdateAccountBalance(accountChangeEvent);
         return "转账成功";
     }
+
+    @GetMapping(value = "/test")
+    public void test() {
+        accountService.test();
+    }
+
 }

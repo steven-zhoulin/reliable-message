@@ -37,6 +37,7 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
     @Override
     public RocketMQLocalTransactionState executeLocalTransaction(Message message, Object o) {
 
+        log.info("===> 当前线程: {}", Thread.currentThread().getName());
         try {
             accountService.doExecuteLocalTransaction(message, o);
             return RocketMQLocalTransactionState.COMMIT;

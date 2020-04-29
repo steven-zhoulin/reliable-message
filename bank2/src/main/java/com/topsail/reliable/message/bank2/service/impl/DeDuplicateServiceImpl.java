@@ -5,9 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.topsail.reliable.message.bank2.entity.po.DeDuplicate;
 import com.topsail.reliable.message.bank2.mapper.DeDuplicateMapper;
 import com.topsail.reliable.message.bank2.service.DeDuplicateService;
-import com.topsail.reliable.message.bank2.entity.po.DeDuplicate;
-import com.topsail.reliable.message.bank2.mapper.DeDuplicateMapper;
-import com.topsail.reliable.message.bank2.service.DeDuplicateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

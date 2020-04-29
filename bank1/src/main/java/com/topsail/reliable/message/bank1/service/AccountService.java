@@ -32,4 +32,6 @@ public interface AccountService extends IService<Account> {
      */
     void doExecuteLocalTransaction(Message message, Object o);
 
+    void test();
+
 }

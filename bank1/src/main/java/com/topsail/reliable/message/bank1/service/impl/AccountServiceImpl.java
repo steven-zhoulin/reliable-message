@@ -57,9 +57,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
          * Message<?> message, 消息内容
          * Object arg 参数
          */
+        log.info("===> 当前线程: {}", Thread.currentThread().getName());
         TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction("producer_group_txmsg_bank1", "topic_txmsg", message, null);
         String msgId = transactionSendResult.getMsgId();
-        log.info("msgId: {}", msgId);
+        log.info("msgId: {}, 当前线程: {}", msgId, Thread.currentThread().getName());
 
     }
 
@@ -112,6 +113,18 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         // 执行本地事务，扣减金额
         this.doUpdateAccountBalance(accountChangeEvent);
         int i = 10 / 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
+    public void test() {
+        Account account = Account.builder().accountNo("1").accountName("啊哈哈").build();
+        log.info("==＞　开始更新账户名称");
+        accountMapper.updateById(account);
+        log.info("==＞　结束更新账户名称");
+
+            deDuplicateService.updateTime();
+
     }
 
 }

@@ -16,4 +16,6 @@ public interface DeDuplicateService extends IService<DeDuplicate> {
      * @return
      */
     boolean isExistTx(String transactionId);
+
+    void updateTime();
 }
