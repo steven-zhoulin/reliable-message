@@ -1,6 +1,7 @@
 package com.topsail.reliable.message.bank1.message;
 
 import com.alibaba.fastjson.JSONObject;
+import com.topsail.reliable.message.bank1.Bank1Constants;
 import com.topsail.reliable.message.bank1.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.bank1.service.AccountService;
 import com.topsail.reliable.message.bank1.service.DeDuplicateService;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@RocketMQTransactionListener(txProducerGroup = "producer_group_txmsg_bank1")
+@RocketMQTransactionListener(txProducerGroup = Bank1Constants.TRANSFER_GROUP)
 public class ProducerListener implements RocketMQLocalTransactionListener {
 
     @Autowired
@@ -50,6 +51,7 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
 
     /**
      * 反查发送端本地事务是否提交（针对 Half-消息 长期未确认的情况）
+     *
      * @param message
      * @return
      */

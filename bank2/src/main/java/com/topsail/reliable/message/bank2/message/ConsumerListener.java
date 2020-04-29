@@ -1,6 +1,7 @@
 package com.topsail.reliable.message.bank2.message;
 
 import com.alibaba.fastjson.JSONObject;
+import com.topsail.reliable.message.bank2.Bank2Constants;
 import com.topsail.reliable.message.bank2.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.bank2.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(consumerGroup = "consumer_group_txmsg_bank2", topic = "topic_txmsg")
+@RocketMQMessageListener(consumerGroup = Bank2Constants.CONSUMER_GROUP, topic = Bank2Constants.TOPIC)
 public class ConsumerListener implements RocketMQListener<String> {
 
     @Autowired

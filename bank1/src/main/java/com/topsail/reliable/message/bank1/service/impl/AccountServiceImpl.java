@@ -2,6 +2,7 @@ package com.topsail.reliable.message.bank1.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.topsail.reliable.message.bank1.Bank1Constants;
 import com.topsail.reliable.message.bank1.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.bank1.entity.po.Account;
 import com.topsail.reliable.message.bank1.entity.po.DeDuplicate;
@@ -58,7 +59,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
          * Object arg 参数
          */
         log.info("===> 当前线程: {}", Thread.currentThread().getName());
-        TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction("producer_group_txmsg_bank1", "topic_txmsg", message, null);
+        TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction(Bank1Constants.TRANSFER_GROUP, Bank1Constants.TOPIC, message, null);
         String msgId = transactionSendResult.getMsgId();
         log.info("msgId: {}, 当前线程: {}", msgId, Thread.currentThread().getName());
 
