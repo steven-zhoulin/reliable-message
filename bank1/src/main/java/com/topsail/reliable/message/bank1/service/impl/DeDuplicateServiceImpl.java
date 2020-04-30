@@ -2,9 +2,9 @@ package com.topsail.reliable.message.bank1.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.topsail.reliable.message.bank1.entity.po.DeDuplicate;
 import com.topsail.reliable.message.bank1.mapper.DeDuplicateMapper;
 import com.topsail.reliable.message.bank1.service.DeDuplicateService;
+import com.topsail.reliable.message.core.entity.po.DeDuplicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,12 +1,12 @@
 package com.topsail.reliable.message.bank2.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.topsail.reliable.message.bank2.entity.event.AccountChangeEvent;
-import com.topsail.reliable.message.bank2.entity.po.Account;
-import com.topsail.reliable.message.bank2.entity.po.DeDuplicate;
 import com.topsail.reliable.message.bank2.mapper.AccountMapper;
 import com.topsail.reliable.message.bank2.service.AccountService;
 import com.topsail.reliable.message.bank2.service.DeDuplicateService;
+import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
+import com.topsail.reliable.message.core.entity.po.Account;
+import com.topsail.reliable.message.core.entity.po.DeDuplicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,14 +38,14 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
     public void addAccountInfoBalance(AccountChangeEvent accountChangeEvent) {
 
-        log.info("bank2更新本地账号，账号：{}, 金额：{}", accountChangeEvent.getToAccountNo(), accountChangeEvent.getAmount());
+        log.info("bank2更新本地账号，账号：{}, 金额：{}", accountChangeEvent.getToAccountId(), accountChangeEvent.getAmount());
 
         if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {
             return;
         }
 
         // 增加金额
-        int result = accountMapper.updateAccountBalance(accountChangeEvent.getToAccountNo(), accountChangeEvent.getAmount());
+        int result = accountMapper.updateAccountBalance(accountChangeEvent.getToAccountId(), accountChangeEvent.getAmount());
         if (1 == result) {
             // 添加事务记录，用于幂等
             DeDuplicate deDuplicate = DeDuplicate.builder()

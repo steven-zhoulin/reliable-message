@@ -1,10 +1,10 @@
-package com.topsail.reliable.message.bank1.message;
+package com.topsail.reliable.message.bank1.listener;
 
-import com.alibaba.fastjson.JSONObject;
-import com.topsail.reliable.message.bank1.Bank1Constants;
-import com.topsail.reliable.message.bank1.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.bank1.service.AccountService;
 import com.topsail.reliable.message.bank1.service.DeDuplicateService;
+import com.topsail.reliable.message.core.Constants;
+import com.topsail.reliable.message.core.convert.MessageConvert;
+import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionListener;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@RocketMQTransactionListener(txProducerGroup = Bank1Constants.PRODUCER_GROUP_BANK1)
+@RocketMQTransactionListener(txProducerGroup = Constants.PRODUCER_GROUP_BANK1)
 public class ProducerListener implements RocketMQLocalTransactionListener {
 
     @Autowired
@@ -32,7 +32,7 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
      * 事务级 Half-消息 发送成功，在此执行本地事务，本地数据库事物执行时间不要超过 MQ 回查时间，第一次回查是：1分钟后。
      *
      * @param message
-     * @param arg sendMessageInTransaction 时带入的业务参数
+     * @param arg     sendMessageInTransaction 时带入的业务参数
      * @return
      */
     @Override
@@ -60,11 +60,7 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
 
         log.info("反查发送端本地事务是否提交...");
 
-        String messageString = new String((byte[]) message.getPayload());
-        JSONObject jsonObject = JSONObject.parseObject(messageString);
-        String accountChangeString = jsonObject.getString("accountChange");
-
-        AccountChangeEvent accountChangeEvent = JSONObject.parseObject(accountChangeString, AccountChangeEvent.class);
+        AccountChangeEvent accountChangeEvent = MessageConvert.from(message);
 
         String transactionId = accountChangeEvent.getTransactionId();
         if (deDuplicateService.isExistTx(transactionId)) {

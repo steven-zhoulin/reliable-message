@@ -1,7 +1,7 @@
 package com.topsail.reliable.message.bank1.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.topsail.reliable.message.bank1.entity.po.Account;
+import com.topsail.reliable.message.core.entity.po.Account;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public interface AccountMapper extends BaseMapper<Account> {
 
-    @Update("update account set account_balance = account_balance + #{amount} where account_no = #{accountNo}")
-    int updateAccountBalance(@Param("accountNo") String accountNo, @Param("amount") Long amount);
+    @Update("update account set account_balance = account_balance + #{amount} where account_id = #{accountId}")
+    int updateAccountBalance(@Param("accountId") String accountId, @Param("amount") Long amount);
 
 }

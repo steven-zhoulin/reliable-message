@@ -1,9 +1,9 @@
-package com.topsail.reliable.message.bank2.message;
+package com.topsail.reliable.message.bank2.listener;
 
-import com.topsail.reliable.message.bank2.Bank2Constants;
-import com.topsail.reliable.message.bank2.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.bank2.service.AccountService;
-import com.topsail.reliable.message.bank2.util.JsonUtils;
+import com.topsail.reliable.message.core.Constants;
+import com.topsail.reliable.message.core.convert.MessageConvert;
+import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -22,7 +22,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(consumerGroup = Bank2Constants.CONSUMER_GROUP_BANK2, topic = Bank2Constants.TOPIC_TRANSFER_ACCOUNT)
+@RocketMQMessageListener(consumerGroup = Constants.CONSUMER_GROUP_BANK2, topic = Constants.TOPIC_TRANSFER_ACCOUNT)
 public class ConsumerListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
 
     @Autowired
@@ -43,9 +43,6 @@ public class ConsumerListener implements RocketMQListener<String>, RocketMQPushC
 
         consumer.registerMessageListener((MessageListenerConcurrently) (messageExts, context) -> {
 
-            /**
-             *
-             */
             try {
                 if (!CollectionUtils.isEmpty(messageExts)) {
                     messageExts.forEach(messageExt -> {
@@ -71,11 +68,10 @@ public class ConsumerListener implements RocketMQListener<String>, RocketMQPushC
      */
     private void handleMessage(MessageExt messageExt) {
 
-        log.info("【消费消息】：第{}次, ext ：{}", messageExt.getReconsumeTimes(), messageExt);
+        log.info("第{}次消费消息, ext ：{}", messageExt.getReconsumeTimes(), messageExt);
 
         // 解析消息
-        String jsonString = new String(messageExt.getBody());
-        AccountChangeEvent accountChangeEvent = JsonUtils.decode(jsonString, AccountChangeEvent.class);
+        AccountChangeEvent accountChangeEvent = MessageConvert.from(messageExt);
 
         // 更新本地账户，增加金额
         accountInfoService.addAccountInfoBalance(accountChangeEvent);

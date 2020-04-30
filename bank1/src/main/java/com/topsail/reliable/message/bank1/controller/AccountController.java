@@ -1,7 +1,7 @@
 package com.topsail.reliable.message.bank1.controller;
 
-import com.topsail.reliable.message.bank1.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.bank1.service.AccountService;
+import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +34,9 @@ public class AccountController {
         String transactionId = UUID.randomUUID().toString();
         AccountChangeEvent accountChangeEvent = AccountChangeEvent.builder()
             /** 银行卡账号：扣钱的账号 */
-            .fromAccountNo("6226-0000-1111-2222")
+            .fromAccountId("6226-0000-1111-2222")
             /** 银行卡账号：充钱的账号 */
-            .toAccountNo("9876-0000-0000-1111")
+            .toAccountId("9876-0000-0000-1111")
             .amount(amount)
             .transactionId(transactionId)
             .build();

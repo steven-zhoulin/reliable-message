@@ -1,6 +1,7 @@
 package com.topsail.reliable.message.bank2.service;
 
-import com.topsail.reliable.message.bank2.entity.event.AccountChangeEvent;
+
+import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 
 /**
  * @author Steven

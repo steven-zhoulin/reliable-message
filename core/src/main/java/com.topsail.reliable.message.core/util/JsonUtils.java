@@ -1,4 +1,4 @@
-package com.topsail.reliable.message.bank1.util;
+package com.topsail.reliable.message.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;

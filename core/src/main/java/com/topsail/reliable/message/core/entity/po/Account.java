@@ -1,4 +1,4 @@
-package com.topsail.reliable.message.bank1.entity.po;
+package com.topsail.reliable.message.core.entity.po;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -30,8 +30,8 @@ public class Account implements Serializable {
     /**
      * 账户号码
      */
-    @TableField(value = "account_no")
-    private String accountNo;
+    @TableField(value = "account_id")
+    private String accountId;
 
     /**
      * 账户姓名

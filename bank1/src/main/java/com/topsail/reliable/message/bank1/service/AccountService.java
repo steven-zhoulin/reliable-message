@@ -1,8 +1,8 @@
 package com.topsail.reliable.message.bank1.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.topsail.reliable.message.bank1.entity.event.AccountChangeEvent;
-import com.topsail.reliable.message.bank1.entity.po.Account;
+import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
+import com.topsail.reliable.message.core.entity.po.Account;
 import org.springframework.messaging.Message;
 
 /**

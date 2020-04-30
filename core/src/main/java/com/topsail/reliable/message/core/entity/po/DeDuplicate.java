@@ -1,4 +1,4 @@
-package com.topsail.reliable.message.bank2.entity.po;
+package com.topsail.reliable.message.core.entity.po;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -27,6 +27,12 @@ public class DeDuplicate {
      */
     @TableId("transaction_id")
     String transactionId;
+
+    /**
+     * 消息Id
+     */
+    @TableField(value = "msg_id")
+    String msgId;
 
     /**
      * 创建时间

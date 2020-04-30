@@ -6,6 +6,5 @@ jar.enabled = true
 bootJar.enabled = true
 
 dependencies {
-//    compile project(':order-api')
-//    compile project(':upc-api')
+    compile project(':core')
 }

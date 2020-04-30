@@ -6,6 +6,9 @@ project(":bank1").projectDir = "${rootDir}/bank1" as File
 include(":bank2")
 project(":bank2").projectDir = "${rootDir}/bank2" as File
 
+include(":core")
+project(":core").projectDir = "${rootDir}/core" as File
+
 include 'bank1'
 include 'bank2'
-
+include 'core'
