@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author Steven
@@ -44,5 +45,11 @@ public class Account implements Serializable {
      */
     @TableField(value = "account_balance")
     private Long accountBalance;
+
+    /**
+     * 更新时间
+     */
+    @TableField(value = "update_time")
+    private LocalDateTime updateTime;
 
 }

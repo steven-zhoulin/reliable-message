@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public interface AccountMapper extends BaseMapper<Account> {
 
-    @Update("update account set account_balance = account_balance + #{amount} where account_id = #{accountId}")
+    @Update("update account set account_balance = account_balance + #{amount}, update_time = now() where account_id = #{accountId}")
     int updateAccountBalance(@Param("accountId") String accountId, @Param("amount") Long amount);
 
 }
