@@ -44,10 +44,14 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             return;
         }
 
+        if (accountChangeEvent.getAmount() < 0) {
+            throw new RuntimeException("转账金额不能为负：" + accountChangeEvent.getAmount());
+        }
+
         // 增加金额
         int result = accountMapper.updateAccountBalance(accountChangeEvent.getToAccountId(), accountChangeEvent.getAmount());
         if (1 == result) {
-            // 添加事务记录，用于幂等
+            // 添加事务记录，用于幂等判断
             DeDuplicate deDuplicate = DeDuplicate.builder()
                 .transactionId(accountChangeEvent.getTransactionId())
                 .createTime(LocalDateTime.now())

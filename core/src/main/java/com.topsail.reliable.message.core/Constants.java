@@ -21,5 +21,14 @@ public class Constants {
      */
     public static final String CONSUMER_GROUP_BANK2 = "CONSUMER_GROUP_BANK2";
 
+    /**
+     * 乐观锁重试次数
+     */
+    public static final int OPTIMISTIC_LOCK_RETRY_TIMES = 3;
+
+    /**
+     * 乐观锁重试间隔时间(毫秒)
+     */
+    public static final int OPTIMISTIC_LOCK_RETRY_INTERVAL = 500;
 
 }

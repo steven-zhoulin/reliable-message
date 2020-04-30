@@ -52,4 +52,11 @@ public class Account implements Serializable {
     @TableField(value = "update_time")
     private LocalDateTime updateTime;
 
+    /**
+     * 乐观锁版本号
+     */
+    @TableField(value = "version")
+    private Long version;
+
+
 }

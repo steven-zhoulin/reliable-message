@@ -1,5 +1,6 @@
 package com.topsail.reliable.message.bank1.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.topsail.reliable.message.bank1.mapper.AccountMapper;
 import com.topsail.reliable.message.bank1.service.AccountService;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Steven
@@ -63,7 +65,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
      */
     @Override
     @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
-    public void doExecuteLocalTransaction(Message message, Object o) {
+    public void doExecuteLocalTransaction(Message message, Object o) throws InterruptedException {
 
         AccountChangeEvent accountChangeEvent = MessageConvert.from(message);
 
@@ -74,18 +76,48 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         log.debug("开始处理本地事务...");
 
-        // 扣减金额
-        accountMapper.updateAccountBalance(accountChangeEvent.getFromAccountId(), accountChangeEvent.getAmount() * -1);
+        // 基于乐观锁实现扣款，默认重试三次，每次间隔 500 毫秒
+        int result = 0;
+        for (int i = 0; i < Constants.OPTIMISTIC_LOCK_RETRY_TIMES; i++) {
 
-        // 添加事务日志
-        DeDuplicate deDuplicate = DeDuplicate.builder()
-            .transactionId(accountChangeEvent.getTransactionId())
-            //.msgId(message.getHeaders())
-            .createTime(LocalDateTime.now())
-            .build();
-        deDuplicateService.save(deDuplicate);
+            // 查询账户信息
+            Account account = accountMapper.selectOne(
+                Wrappers.<Account>lambdaQuery()
+                    .eq(Account::getAccountId, accountChangeEvent.getFromAccountId())
+            );
 
-        log.debug("本地事务处理成功");
+            // 判断余额是否足够
+            if (account.getAccountBalance() < accountChangeEvent.getAmount()) {
+                throw new RuntimeException("余额不足!");
+            }
+
+            // 扣减金额
+            result = accountMapper.updateAccountBalance(
+                accountChangeEvent.getFromAccountId(),
+                Math.negateExact(accountChangeEvent.getAmount()),
+                account.getVersion()
+            );
+            if (1 == result) {
+                break;
+            } else {
+                log.info("并发扣款冲突，{}毫秒后重试", Constants.OPTIMISTIC_LOCK_RETRY_INTERVAL);
+                TimeUnit.MICROSECONDS.sleep(Constants.OPTIMISTIC_LOCK_RETRY_INTERVAL);
+            }
+        }
+
+        if (1 == result) {
+            // 添加事务日志
+            DeDuplicate deDuplicate = DeDuplicate.builder()
+                .transactionId(accountChangeEvent.getTransactionId())
+                //.msgId(message.getHeaders())
+                .createTime(LocalDateTime.now())
+                .build();
+            deDuplicateService.save(deDuplicate);
+
+            log.debug("本地事务处理成功");
+        } else {
+            throw new RuntimeException("转账失败: " + accountChangeEvent);
+        }
 
     }
 

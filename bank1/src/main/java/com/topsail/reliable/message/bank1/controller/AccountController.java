@@ -4,10 +4,12 @@ import com.topsail.reliable.message.bank1.service.AccountService;
 import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Min;
 import java.util.UUID;
 
 /**
@@ -16,6 +18,7 @@ import java.util.UUID;
  */
 @RestController
 @Slf4j
+@Validated
 public class AccountController {
 
     @Autowired
@@ -28,7 +31,8 @@ public class AccountController {
      * @return
      */
     @GetMapping(value = "/transfer")
-    public String transfer(@RequestParam("amount") Long amount) {
+    public String transfer(@Min(value = 1, message = "amount must > 0")
+                           @RequestParam("amount") Long amount) {
 
         // 事务ID，用于做幂等处理
         String transactionId = UUID.randomUUID().toString();

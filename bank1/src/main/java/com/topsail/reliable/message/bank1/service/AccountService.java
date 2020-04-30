@@ -25,6 +25,6 @@ public interface AccountService extends IService<Account> {
      * @param message
      * @param o
      */
-    void doExecuteLocalTransaction(Message message, Object o);
+    void doExecuteLocalTransaction(Message message, Object o) throws InterruptedException;
 
 }
