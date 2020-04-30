@@ -1,6 +1,7 @@
 package com.topsail.reliable.message.bank1.entity.event;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,14 +14,15 @@ import java.io.Serializable;
  * @date 2020-02-12
  */
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountChangeEvent implements Serializable {
 
-    /**
-     * 账号
-     */
-    private String accountNo;
+
+    private String fromAccountNo;
+
+    private String toAccountNo;
 
     /**
      * 变动金额

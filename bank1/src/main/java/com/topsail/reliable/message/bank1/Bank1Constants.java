@@ -6,6 +6,14 @@ package com.topsail.reliable.message.bank1;
  */
 public class Bank1Constants {
 
-    public static final String TRANSFER_GROUP = "producer_group_txmsg_bank1";
-    public static final String TOPIC = "topic_txmsg";
+    /**
+     * 发送组名
+     */
+    public static final String PRODUCER_GROUP_BANK1 = "PRODUCER_GROUP_BANK1";
+
+    /**
+     * 转账主题
+     */
+    public static final String TOPIC_TRANSFER_ACCOUNT = "TOPIC_TRANSFER_ACCOUNT";
+
 }

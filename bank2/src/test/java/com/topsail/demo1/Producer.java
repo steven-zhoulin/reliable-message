@@ -8,7 +8,6 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * @author Steven

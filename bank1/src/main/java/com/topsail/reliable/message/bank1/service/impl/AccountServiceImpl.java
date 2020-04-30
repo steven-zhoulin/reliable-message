@@ -1,6 +1,5 @@
 package com.topsail.reliable.message.bank1.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.topsail.reliable.message.bank1.Bank1Constants;
 import com.topsail.reliable.message.bank1.entity.event.AccountChangeEvent;
@@ -9,6 +8,7 @@ import com.topsail.reliable.message.bank1.entity.po.DeDuplicate;
 import com.topsail.reliable.message.bank1.mapper.AccountMapper;
 import com.topsail.reliable.message.bank1.service.AccountService;
 import com.topsail.reliable.message.bank1.service.DeDuplicateService;
+import com.topsail.reliable.message.bank1.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -46,53 +46,15 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Override
     public void asyncUpdateAccountBalance(AccountChangeEvent accountChangeEvent) {
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("accountChange", accountChangeEvent);
-        String jsonString = jsonObject.toJSONString();
-
+        String jsonString = JsonUtils.encode(accountChangeEvent);
         Message<String> message = MessageBuilder.withPayload(jsonString).build();
 
-        /**
-         * String txProducerGroup 生产组
-         * String destination topic，
-         * Message<?> message, 消息内容
-         * Object arg 参数
-         */
-        log.info("===> 当前线程: {}", Thread.currentThread().getName());
-        TransactionSendResult transactionSendResult = rocketMQTemplate.sendMessageInTransaction(Bank1Constants.TRANSFER_GROUP, Bank1Constants.TOPIC, message, null);
-        String msgId = transactionSendResult.getMsgId();
-        log.info("msgId: {}, 当前线程: {}", msgId, Thread.currentThread().getName());
+        TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(Bank1Constants.PRODUCER_GROUP_BANK1, Bank1Constants.TOPIC_TRANSFER_ACCOUNT, message, null);
+        String msgId = sendResult.getMsgId();
 
-    }
+        log.info("发送转账消息成功！{}", msgId);
+        log.info("{}", sendResult);
 
-    /**
-     * 更新账户，扣减金额
-     *
-     * @param accountChangeEvent
-     */
-    @Override
-    @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
-    public void doUpdateAccountBalance(AccountChangeEvent accountChangeEvent) {
-
-        log.info("异步调用方，处理本地事务...");
-
-        // 幂等判断
-        if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {
-            return;
-        }
-
-        // 扣减金额
-        accountMapper.updateAccountBalance(accountChangeEvent.getAccountNo(), accountChangeEvent.getAmount() * -1);
-
-        log.info("添加事务日志");
-        DeDuplicate deDuplicate = DeDuplicate.builder()
-            .transactionId(accountChangeEvent.getTransactionId())
-            .createTime(LocalDateTime.now())
-            .build();
-        deDuplicateService.save(deDuplicate);
-        if (accountChangeEvent.getAmount() == 3) {
-            throw new RuntimeException("人为制造异常");
-        }
     }
 
     /**
@@ -104,27 +66,29 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Override
     @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
     public void doExecuteLocalTransaction(Message message, Object o) {
+
         String messageString = new String((byte[]) message.getPayload());
-        JSONObject jsonObject = JSONObject.parseObject(messageString);
-        String accountChangeString = jsonObject.getString("accountChange");
+        AccountChangeEvent accountChangeEvent = JsonUtils.decode(messageString, AccountChangeEvent.class);
 
-        // 将accountChange（json）转成AccountChangeEvent
-        AccountChangeEvent accountChangeEvent = JSONObject.parseObject(accountChangeString, AccountChangeEvent.class);
+        // 幂等判断
+        if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {
+            return;
+        }
 
-        // 执行本地事务，扣减金额
-        this.doUpdateAccountBalance(accountChangeEvent);
-        int i = 10 / 0;
-    }
+        log.debug("开始处理本地事务...");
 
-    @Override
-    @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
-    public void test() {
-        Account account = Account.builder().accountNo("1").accountName("啊哈哈").build();
-        log.info("==＞　开始更新账户名称");
-        accountMapper.updateById(account);
-        log.info("==＞　结束更新账户名称");
+        // 扣减金额
+        accountMapper.updateAccountBalance(accountChangeEvent.getFromAccountNo(), accountChangeEvent.getAmount() * -1);
 
-            deDuplicateService.updateTime();
+        // 添加事务日志
+        DeDuplicate deDuplicate = DeDuplicate.builder()
+            .transactionId(accountChangeEvent.getTransactionId())
+            //.msgId(message.getHeaders())
+            .createTime(LocalDateTime.now())
+            .build();
+        deDuplicateService.save(deDuplicate);
+
+        log.debug("本地事务处理成功");
 
     }
 

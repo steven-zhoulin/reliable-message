@@ -23,24 +23,27 @@ public class AccountController {
 
     /**
      * 转账
-     * @param accountId
-     * @param amount
+     *
+     * @param amount 转账金额
      * @return
      */
     @GetMapping(value = "/transfer")
-    public String transfer(@RequestParam("accountId") String accountId, @RequestParam("amount") Long amount) {
+    public String transfer(@RequestParam("amount") Long amount) {
 
+        // 事务ID，用于做幂等处理
         String transactionId = UUID.randomUUID().toString();
-        AccountChangeEvent accountChangeEvent = new AccountChangeEvent(accountId, amount, transactionId);
+        AccountChangeEvent accountChangeEvent = AccountChangeEvent.builder()
+            /** 银行卡账号：扣钱的账号 */
+            .fromAccountNo("6226-0000-1111-2222")
+            /** 银行卡账号：充钱的账号 */
+            .toAccountNo("9876-0000-0000-1111")
+            .amount(amount)
+            .transactionId(transactionId)
+            .build();
 
         // 异步调用转账逻辑
         accountService.asyncUpdateAccountBalance(accountChangeEvent);
         return "转账成功";
-    }
-
-    @GetMapping(value = "/test")
-    public void test() {
-        accountService.test();
     }
 
 }

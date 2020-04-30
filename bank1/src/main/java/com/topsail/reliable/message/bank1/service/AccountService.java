@@ -18,20 +18,13 @@ public interface AccountService extends IService<Account> {
      */
     void asyncUpdateAccountBalance(AccountChangeEvent accountChangeEvent);
 
-    /**
-     * 更新账户，扣减金额
-     *
-     * @param accountChangeEvent
-     */
-    void doUpdateAccountBalance(AccountChangeEvent accountChangeEvent);
 
     /**
      * 执行本地事务
+     *
      * @param message
      * @param o
      */
     void doExecuteLocalTransaction(Message message, Object o);
-
-    void test();
 
 }

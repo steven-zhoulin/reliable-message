@@ -38,24 +38,25 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
     public void addAccountInfoBalance(AccountChangeEvent accountChangeEvent) {
 
-        log.info("bank2更新本地账号，账号：{},金额：{}", accountChangeEvent.getAccountNo(), accountChangeEvent.getAmount());
+        log.info("bank2更新本地账号，账号：{}, 金额：{}", accountChangeEvent.getToAccountNo(), accountChangeEvent.getAmount());
 
         if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {
             return;
         }
 
         // 增加金额
-        accountMapper.updateAccountBalance(accountChangeEvent.getAccountNo(), accountChangeEvent.getAmount());
-
-        // 添加事务记录，用于幂等
-        DeDuplicate deDuplicate = DeDuplicate.builder()
-            .transactionId(accountChangeEvent.getTransactionId())
-            .createTime(LocalDateTime.now())
-            .build();
-        deDuplicateService.save(deDuplicate);
-        if (accountChangeEvent.getAmount() == 4) {
-            throw new RuntimeException("人为制造异常");
+        int result = accountMapper.updateAccountBalance(accountChangeEvent.getToAccountNo(), accountChangeEvent.getAmount());
+        if (1 == result) {
+            // 添加事务记录，用于幂等
+            DeDuplicate deDuplicate = DeDuplicate.builder()
+                .transactionId(accountChangeEvent.getTransactionId())
+                .createTime(LocalDateTime.now())
+                .build();
+            deDuplicateService.save(deDuplicate);
+        } else {
+            throw new RuntimeException("转账失败!" + accountChangeEvent);
         }
+
     }
 
 }

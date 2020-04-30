@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@RocketMQTransactionListener(txProducerGroup = Bank1Constants.TRANSFER_GROUP)
+@RocketMQTransactionListener(txProducerGroup = Bank1Constants.PRODUCER_GROUP_BANK1)
 public class ProducerListener implements RocketMQLocalTransactionListener {
 
     @Autowired
@@ -29,18 +29,17 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
     DeDuplicateService deDuplicateService;
 
     /**
-     * 事务级 Half-消息 发送成功，在此执行本地事务
+     * 事务级 Half-消息 发送成功，在此执行本地事务，本地数据库事物执行时间不要超过 MQ 回查时间，第一次回查是：1分钟后。
      *
      * @param message
-     * @param o
+     * @param arg sendMessageInTransaction 时带入的业务参数
      * @return
      */
     @Override
-    public RocketMQLocalTransactionState executeLocalTransaction(Message message, Object o) {
+    public RocketMQLocalTransactionState executeLocalTransaction(Message message, Object arg) {
 
-        log.info("===> 当前线程: {}", Thread.currentThread().getName());
         try {
-            accountService.doExecuteLocalTransaction(message, o);
+            accountService.doExecuteLocalTransaction(message, arg);
             return RocketMQLocalTransactionState.COMMIT;
         } catch (Exception e) {
             log.error("本地事务执行异常: ", e);
@@ -51,6 +50,7 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
 
     /**
      * 反查发送端本地事务是否提交（针对 Half-消息 长期未确认的情况）
+     * 每分钟 1 次，默认 15 次
      *
      * @param message
      * @return

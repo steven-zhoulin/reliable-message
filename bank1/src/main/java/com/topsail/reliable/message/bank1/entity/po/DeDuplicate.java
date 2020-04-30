@@ -29,6 +29,12 @@ public class DeDuplicate {
     String transactionId;
 
     /**
+     * 消息Id
+     */
+    @TableField(value = "msg_id")
+    String msgId;
+
+    /**
      * 创建时间
      */
     @TableField(value = "create_time", fill = FieldFill.INSERT)
