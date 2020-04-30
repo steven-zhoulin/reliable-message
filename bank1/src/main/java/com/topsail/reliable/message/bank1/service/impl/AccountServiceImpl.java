@@ -69,7 +69,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         AccountChangeEvent accountChangeEvent = MessageConvert.from(message);
 
-        // 幂等判断
+        // 1.幂等判断
         if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {
             return;
         }
@@ -80,18 +80,18 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         int result = 0;
         for (int i = 0; i < Constants.OPTIMISTIC_LOCK_RETRY_TIMES; i++) {
 
-            // 查询账户信息
+            // 2.查询账户信息
             Account account = accountMapper.selectOne(
                 Wrappers.<Account>lambdaQuery()
                     .eq(Account::getAccountId, accountChangeEvent.getFromAccountId())
             );
 
-            // 判断余额是否足够
+            // 3.判断余额是否足够
             if (account.getAccountBalance() < accountChangeEvent.getAmount()) {
                 throw new RuntimeException("余额不足!");
             }
 
-            // 扣减金额
+            // 4.扣减金额
             result = accountMapper.updateAccountBalance(
                 accountChangeEvent.getFromAccountId(),
                 Math.negateExact(accountChangeEvent.getAmount()),
@@ -106,7 +106,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         }
 
         if (1 == result) {
-            // 添加事务日志
+            // 5.添加事务日志
             DeDuplicate deDuplicate = DeDuplicate.builder()
                 .transactionId(accountChangeEvent.getTransactionId())
                 //.msgId(message.getHeaders())
