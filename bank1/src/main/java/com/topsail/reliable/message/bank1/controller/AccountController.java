@@ -38,9 +38,9 @@ public class AccountController {
         String transactionId = UUID.randomUUID().toString();
         AccountChangeEvent accountChangeEvent = AccountChangeEvent.builder()
             /** 银行卡账号：扣钱的账号 */
-            .fromAccountId("6226-0000-1111-2222")
+            .srcAccountId("6226-0000-1111-2222")
             /** 银行卡账号：充钱的账号 */
-            .toAccountId("9876-0000-0000-1111")
+            .dstAccountId("9876-0000-0000-1111")
             .amount(amount)
             .transactionId(transactionId)
             .build();

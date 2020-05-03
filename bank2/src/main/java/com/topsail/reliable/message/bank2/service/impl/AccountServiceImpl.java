@@ -38,7 +38,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
     public void addAccountInfoBalance(AccountChangeEvent accountChangeEvent) {
 
-        log.info("bank2更新本地账号，账号：{}, 金额：{}", accountChangeEvent.getToAccountId(), accountChangeEvent.getAmount());
+        log.info("bank2更新本地账号，账号：{}, 金额：{}", accountChangeEvent.getDstAccountId(), accountChangeEvent.getAmount());
 
         if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {
             return;
@@ -49,7 +49,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         }
 
         // 增加金额
-        int result = accountMapper.updateAccountBalance(accountChangeEvent.getToAccountId(), accountChangeEvent.getAmount());
+        int result = accountMapper.updateAccountBalance(accountChangeEvent.getDstAccountId(), accountChangeEvent.getAmount());
         if (1 == result) {
             // 添加事务记录，用于幂等判断
             DeDuplicate deDuplicate = DeDuplicate.builder()

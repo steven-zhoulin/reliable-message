@@ -19,10 +19,15 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class AccountChangeEvent implements Serializable {
 
+    /**
+     * 源账号
+     */
+    private String srcAccountId;
 
-    private String fromAccountId;
-
-    private String toAccountId;
+    /**
+     * 目的账号
+     */
+    private String dstAccountId;
 
     /**
      * 变动金额

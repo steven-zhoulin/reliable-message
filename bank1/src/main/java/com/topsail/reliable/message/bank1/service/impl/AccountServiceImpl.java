@@ -83,7 +83,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             // 2.查询账户信息
             Account account = accountMapper.selectOne(
                 Wrappers.<Account>lambdaQuery()
-                    .eq(Account::getAccountId, accountChangeEvent.getFromAccountId())
+                    .eq(Account::getAccountId, accountChangeEvent.getSrcAccountId())
             );
 
             // 3.判断余额是否足够
@@ -93,7 +93,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
             // 4.扣减金额
             result = accountMapper.updateAccountBalance(
-                accountChangeEvent.getFromAccountId(),
+                accountChangeEvent.getSrcAccountId(),
                 Math.negateExact(accountChangeEvent.getAmount()),
                 account.getVersion()
             );
