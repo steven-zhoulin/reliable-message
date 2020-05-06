@@ -24,6 +24,12 @@ public class DeDuplicateServiceImpl extends ServiceImpl<DeDuplicateMapper, DeDup
     @Autowired
     private DeDuplicateMapper deDuplicateMapper;
 
+    /**
+     * 判断事务是否处理过
+     *
+     * @param transactionId
+     * @return
+     */
     @Override
     public boolean isExistTx(String transactionId) {
         return count(
