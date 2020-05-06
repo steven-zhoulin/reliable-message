@@ -51,7 +51,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(Constants.PRODUCER_GROUP_BANK1, Constants.TOPIC_TRANSFER_ACCOUNT, message, null);
         String msgId = sendResult.getMsgId();
-
         log.info("发送转账消息成功！{}", msgId);
         log.info("{}", sendResult);
 
