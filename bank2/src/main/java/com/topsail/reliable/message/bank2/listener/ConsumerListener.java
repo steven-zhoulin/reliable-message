@@ -1,9 +1,7 @@
 package com.topsail.reliable.message.bank2.listener;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.topsail.reliable.message.bank2.service.AccountService;
 import com.topsail.reliable.message.core.Constants;
-import com.topsail.reliable.message.core.MessageDelayLevel;
 import com.topsail.reliable.message.core.convert.MessageConvert;
 import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -54,21 +52,21 @@ public class ConsumerListener implements RocketMQListener<String>, RocketMQPushC
             // 消费消息
             MessageExt messageExt = messageExts.get(0);
             String key = messageExt.getKeys();
+            String topic = messageExt.getTopic();
             int reconsumeTimes = messageExt.getReconsumeTimes();
 
             try {
 
                 // 解析消息
                 AccountChangeEvent accountChangeEvent = MessageConvert.from(messageExt);
-
+                int i = 1 / 0;
                 // 更新本地账户，增加金额
                 accountInfoService.addAccountInfoBalance(accountChangeEvent);
-                log.info("消费成功[第{}次重试], key: {}", reconsumeTimes, key);
+                log.info("消费成功[第{}次重试], topic: {} key: {}", reconsumeTimes, topic, key);
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             } catch (Exception e) {
                 e.printStackTrace();
-                int delayLevelWhenNextConsume = context.getDelayLevelWhenNextConsume();
-                log.error("消费失败[第{}次重试], key: {}, when next consume: {}", reconsumeTimes, key, MessageDelayLevel.display(delayLevelWhenNextConsume));
+                log.error("消费失败[第{}次重试], topic: {}, key: {}", reconsumeTimes, topic, key);
                 return ConsumeConcurrentlyStatus.RECONSUME_LATER;
             }
 

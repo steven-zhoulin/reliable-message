@@ -51,7 +51,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         String destination = Constants.TOPIC_BANK1_ACCOUNT_CHANGE + ":" + accountChangeEvent.getDstBank();
         TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(Constants.PRODUCER_GROUP_BANK1, destination, message, null);
 
-        log.info("key: " + accountChangeEvent.getTransactionId());
+        log.info("topic: {} key: {}", Constants.TOPIC_BANK1_ACCOUNT_CHANGE, accountChangeEvent.getTransactionId());
         log.info("sendResult: {}", sendResult);
 
     }
