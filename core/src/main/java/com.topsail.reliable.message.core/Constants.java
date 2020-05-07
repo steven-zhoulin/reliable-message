@@ -7,12 +7,12 @@ package com.topsail.reliable.message.core;
 public class Constants {
 
     /**
-     * 转账主题
+     * 转账主题，主题命名规范：TOPIC_{应用归属名}_{主题标识}
      */
-    public static final String TOPIC_TRANSFER_ACCOUNT = "TOPIC_TRANSFER_ACCOUNT";
+    public static final String TOPIC_BANK1_ACCOUNT_CHANGE = "TOPIC_BANK1_ACCOUNT_CHANGE";
 
     /**
-     * 发送组名
+     * 发送组名  PGRP CGRP  TPC
      */
     public static final String PRODUCER_GROUP_BANK1 = "PRODUCER_GROUP_BANK1";
 

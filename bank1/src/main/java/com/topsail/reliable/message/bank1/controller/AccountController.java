@@ -34,11 +34,13 @@ public class AccountController {
     public String transfer(@Min(value = 1, message = "amount must > 0")
                            @RequestParam("amount") Long amount) {
 
-        // 事务ID，用于做幂等处理
+        // 事务Id，用于做幂等处理
         String transactionId = UUID.randomUUID().toString();
         AccountChangeEvent accountChangeEvent = AccountChangeEvent.builder()
+            .srcBank("bank1")
             /** 银行卡账号：扣钱的账号 */
             .srcAccountId("6226-0000-1111-2222")
+            .dstBank("bank2")
             /** 银行卡账号：充钱的账号 */
             .dstAccountId("9876-0000-0000-1111")
             .amount(amount)

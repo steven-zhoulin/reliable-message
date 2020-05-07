@@ -22,9 +22,9 @@ public interface AccountService extends IService<Account> {
     /**
      * 执行本地事务
      *
-     * @param message
+     * @param accountChangeEvent
      * @param o
      */
-    void doExecuteLocalTransaction(Message message, Object o) throws InterruptedException;
+    void doExecuteLocalTransaction(AccountChangeEvent accountChangeEvent, Object o) throws InterruptedException;
 
 }

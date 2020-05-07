@@ -22,9 +22,19 @@ public class AccountChangeEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 源账号
+     * 来源银行
+     */
+    private String srcBank;
+
+    /**
+     * 来源账号
      */
     private String srcAccountId;
+
+    /**
+     * 目的银行
+     */
+    private String dstBank;
 
     /**
      * 目的账号

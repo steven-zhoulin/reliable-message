@@ -38,11 +38,15 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
     @Override
     public RocketMQLocalTransactionState executeLocalTransaction(Message message, Object arg) {
 
+        AccountChangeEvent accountChangeEvent = MessageConvert.from(message);
+        Object key = accountChangeEvent.getTransactionId();
+
         try {
-            accountService.doExecuteLocalTransaction(message, arg);
+            accountService.doExecuteLocalTransaction(accountChangeEvent, arg);
+            log.info("Local transaction execute success, commit half message! key: {}", key);
             return RocketMQLocalTransactionState.COMMIT;
         } catch (Exception e) {
-            log.error("本地事务执行异常: ", e);
+            log.error("Local transaction execute failure, rollback half message! key: {}", key);
             return RocketMQLocalTransactionState.ROLLBACK;
         }
 
@@ -59,15 +63,15 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
     public RocketMQLocalTransactionState checkLocalTransaction(Message message) {
 
         log.info("反查发送端本地事务是否提交...");
-
         AccountChangeEvent accountChangeEvent = MessageConvert.from(message);
+        Object key = accountChangeEvent.getTransactionId();
 
         String transactionId = accountChangeEvent.getTransactionId();
         if (deDuplicateService.isExistTx(transactionId)) {
-            log.info("调用端事务已提交，确认提交消息！");
+            log.info("Check local transaction execute success, commit half message! key: {}", key);
             return RocketMQLocalTransactionState.COMMIT;
         } else {
-            log.info("调用端事务未提交，不提交消息！");
+            log.error("Check local transaction execute failure, rollback half message! key: {}", key);
             return RocketMQLocalTransactionState.ROLLBACK;
         }
     }

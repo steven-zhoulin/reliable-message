@@ -48,7 +48,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     public void asyncUpdateAccountBalance(AccountChangeEvent accountChangeEvent) {
 
         Message<String> message = MessageConvert.from(accountChangeEvent);
-        TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(Constants.PRODUCER_GROUP_BANK1, Constants.TOPIC_TRANSFER_ACCOUNT, message, null);
+        String destination = Constants.TOPIC_BANK1_ACCOUNT_CHANGE + ":" + accountChangeEvent.getDstBank();
+        TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(Constants.PRODUCER_GROUP_BANK1, destination, message, null);
 
         log.info("key: " + accountChangeEvent.getTransactionId());
         log.info("sendResult: {}", sendResult);
@@ -58,14 +59,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     /**
      * 执行本地事务
      *
-     * @param message
+     * @param accountChangeEvent
      * @param o
      */
     @Override
     @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
-    public void doExecuteLocalTransaction(Message message, Object o) throws InterruptedException {
-
-        AccountChangeEvent accountChangeEvent = MessageConvert.from(message);
+    public void doExecuteLocalTransaction(AccountChangeEvent accountChangeEvent, Object o) throws InterruptedException {
 
         // 1.幂等判断
         if (deDuplicateService.isExistTx(accountChangeEvent.getTransactionId())) {

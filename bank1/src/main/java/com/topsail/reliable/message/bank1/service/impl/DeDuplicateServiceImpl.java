@@ -38,14 +38,14 @@ public class DeDuplicateServiceImpl extends ServiceImpl<DeDuplicateMapper, DeDup
         ) > 0;
     }
 
-    @Override
-    @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
-    public void updateTime() {
-        log.info("==> 开始更新 deDuplicate 的时间戳");
-        DeDuplicate deDuplicate = DeDuplicate.builder().transactionId("f3955126-a578-4344-8ea3-9bd698a9c760").createTime(LocalDateTime.now()).build();
-        deDuplicateMapper.updateById(deDuplicate);
-        //int i = 10 / 0;
-        log.info("==> 结束更新 deDuplicate 的时间戳");
-    }
+//    @Override
+//    @Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED)
+//    public void updateTime() {
+//        log.info("==> 开始更新 deDuplicate 的时间戳");
+//        DeDuplicate deDuplicate = DeDuplicate.builder().transactionId("f3955126-a578-4344-8ea3-9bd698a9c760").createTime(LocalDateTime.now()).build();
+//        deDuplicateMapper.updateById(deDuplicate);
+//        //int i = 10 / 0;
+//        log.info("==> 结束更新 deDuplicate 的时间戳");
+//    }
 
 }
