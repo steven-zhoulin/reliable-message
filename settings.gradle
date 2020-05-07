@@ -2,13 +2,21 @@ rootProject.name = "reliable-message"
 
 include(":bank1")
 project(":bank1").projectDir = "${rootDir}/bank1" as File
+include 'bank1'
 
 include(":bank2")
 project(":bank2").projectDir = "${rootDir}/bank2" as File
+include 'bank2'
 
 include(":core")
 project(":core").projectDir = "${rootDir}/core" as File
-
-include 'bank1'
-include 'bank2'
 include 'core'
+
+include(":example-producer")
+project(":example-producer").projectDir = "${rootDir}/example-producer" as File
+include 'example-producer'
+
+include(":example-consumer")
+project(":example-consumer").projectDir = "${rootDir}/example-consumer" as File
+include 'example-consumer'
+

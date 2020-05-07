@@ -19,6 +19,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class AccountChangeEvent implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * 源账号
      */

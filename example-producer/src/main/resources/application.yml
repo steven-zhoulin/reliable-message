@@ -1,0 +1,13 @@
+server.port: 56081
+spring.application.name: example-producer
+server.servlet.context-path: /example-producer
+
+rocketmq:
+  name-server: 10.13.3.13:9876
+  producer.group: example-producer
+
+logging:
+  level:
+    root: info
+    org.springframework.web: info
+    com.topsail: debug

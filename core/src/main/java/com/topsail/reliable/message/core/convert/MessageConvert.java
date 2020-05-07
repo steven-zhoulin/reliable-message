@@ -26,7 +26,8 @@ public class MessageConvert {
 
     public static final Message<String> from(AccountChangeEvent accountChangeEvent) {
         String jsonString = JsonUtils.encode(accountChangeEvent);
-        Message<String> message = MessageBuilder.withPayload(jsonString).build();
+        /** 这里将 事务Id 作为 业务 Key */
+        Message<String> message = MessageBuilder.withPayload(jsonString).setHeader("KEYS", accountChangeEvent.getTransactionId()).build();
         return message;
     }
 
