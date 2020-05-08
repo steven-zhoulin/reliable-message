@@ -59,7 +59,7 @@ public class ConsumerListener implements RocketMQListener<String>, RocketMQPushC
 
                 // 解析消息
                 AccountChangeEvent accountChangeEvent = MessageConvert.from(messageExt);
-                int i = 1 / 0;
+
                 // 更新本地账户，增加金额
                 accountInfoService.addAccountInfoBalance(accountChangeEvent);
                 log.info("消费成功[第{}次重试], topic: {} key: {}", reconsumeTimes, topic, key);

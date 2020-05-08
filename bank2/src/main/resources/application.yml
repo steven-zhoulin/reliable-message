@@ -10,8 +10,8 @@ spring:
     password: 1q1w1e1r
 
 rocketmq:
-  producer.group: producer_bank2
   name-server: 10.13.3.13:9876
+  producer.group: producer_bank2
 
 logging:
   level:

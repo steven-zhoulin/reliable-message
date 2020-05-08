@@ -9,24 +9,24 @@ public final class MessageDelayLevel {
     /**
      * 对应延时消息的 18 级单位
      */
-    int DELAY_1_SECOND = 1;
-    int DELAY_5_SECOND = 2;
-    int DELAY_10_SECOND = 3;
-    int DELAY_30_SECOND = 4;
-    int DELAY_1_MINUTE = 5;
-    int DELAY_2_MINUTE = 6;
-    int DELAY_3_MINUTE = 7;
-    int DELAY_4_MINUTE = 8;
-    int DELAY_5_MINUTE = 9;
-    int DELAY_6_MINUTE = 10;
-    int DELAY_7_MINUTE = 11;
-    int DELAY_8_MINUTE = 12;
-    int DELAY_9_MINUTE = 13;
-    int DELAY_10_MINUTE = 14;
-    int DELAY_20_MINUTE = 15;
-    int DELAY_30_MINUTE = 16;
-    int DELAY_1_HOUR = 17;
-    int DELAY_2_HOUR = 18;
+    public static final int DELAY_1_SECOND = 1;
+    public static final int DELAY_5_SECOND = 2;
+    public static final int DELAY_10_SECOND = 3;
+    public static final int DELAY_30_SECOND = 4;
+    public static final int DELAY_1_MINUTE = 5;
+    public static final int DELAY_2_MINUTE = 6;
+    public static final int DELAY_3_MINUTE = 7;
+    public static final int DELAY_4_MINUTE = 8;
+    public static final int DELAY_5_MINUTE = 9;
+    public static final int DELAY_6_MINUTE = 10;
+    public static final int DELAY_7_MINUTE = 11;
+    public static final int DELAY_8_MINUTE = 12;
+    public static final int DELAY_9_MINUTE = 13;
+    public static final int DELAY_10_MINUTE = 14;
+    public static final int DELAY_20_MINUTE = 15;
+    public static final int DELAY_30_MINUTE = 16;
+    public static final int DELAY_1_HOUR = 17;
+    public static final int DELAY_2_HOUR = 18;
 
     private static String[] delayNames = {
         "",

@@ -1,6 +1,5 @@
 package com.topsail.example;
 
-import com.topsail.reliable.message.core.Constants;
 import com.topsail.reliable.message.core.MessageDelayLevel;
 import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import lombok.SneakyThrows;
@@ -120,7 +119,7 @@ public class ProducerApplication implements CommandLineRunner {
 
         for (int i = 0; i < 5; i++) {
             String content = "我是一条延迟消息。sendTime@" + LocalDateTime.now();
-            SendResult sendResult = rocketMQTemplate.syncSend("topic-test-1", MessageBuilder.withPayload(content).build(), 3000L, MessageDelayLevel.DELAY_1_MINUTE);
+            SendResult sendResult = rocketMQTemplate.syncSend("topic-test-1", MessageBuilder.withPayload(content).build(), 3000L, MessageDelayLevel.DELAY_1_SECOND);
             log.info("== 发送延时消息 ==");
             log.info("状态:   {}", sendResult.getSendStatus());
             log.info("msgId: {}", sendResult.getMsgId());
