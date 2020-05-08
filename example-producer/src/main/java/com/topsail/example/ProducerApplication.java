@@ -48,10 +48,6 @@ public class ProducerApplication implements CommandLineRunner {
 
         /*
 
-        // topic: ORDER，tag: paid, cacel
-        rocketMQTemplate.convertAndSend("ORDER:paid", "Hello, World!");
-        rocketMQTemplate.convertAndSend("ORDER:cancel", "Hello, World!");
-
         // 发送顺序消息
         rocketMQTemplate.syncSendOrderly("test-topic-4", "I'm order message", "1234");
 
