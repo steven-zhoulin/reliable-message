@@ -20,3 +20,7 @@ include(":example-consumer")
 project(":example-consumer").projectDir = "${rootDir}/example-consumer" as File
 include 'example-consumer'
 
+include(":lettuce")
+project(":lettuce").projectDir = "${rootDir}/lettuce" as File
+include 'lettuce'
+

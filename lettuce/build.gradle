@@ -1,0 +1,17 @@
+/* 子模块项目名，jar名 */
+archivesBaseName = 'lettuce'
+
+jar.enabled = true
+/* 需要org.springframework.boot插件 不需要打包成可执行的jar*/
+bootJar.enabled = true
+
+dependencies {
+    //compile project(':core')
+    implementation "org.springframework.data:spring-data-redis"
+    implementation "io.lettuce:lettuce-core:5.1.8.RELEASE"
+    implementation "org.apache.commons:commons-pool2"
+    implementation "com.github.ben-manes.caffeine:caffeine"
+
+
+    //testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

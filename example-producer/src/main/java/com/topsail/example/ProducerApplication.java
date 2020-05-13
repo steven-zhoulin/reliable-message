@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -43,8 +44,8 @@ public class ProducerApplication implements CommandLineRunner {
         //testAsyncSend();
         //testSendDelay();
         //testSendOneWay();
-        //testSendWithTag();
-        testSendWithKey();
+        testSendWithTag();
+        //testSendWithKey();
 
         /*
 
@@ -91,6 +92,7 @@ public class ProducerApplication implements CommandLineRunner {
     private void testAsyncSend() {
         // 异步发送消息
         String content = "我是一条通过异步机制发送的消息。sendTime@" + LocalDateTime.now();
+        content = StringUtils.rightPad(content, 1024 * 1024 * 4 - 1024, "#");
         rocketMQTemplate.asyncSend("topic-test-1", MessageBuilder.withPayload(content).build(), new SendCallback() {
             @Override
             public void onSuccess(SendResult sendResult) {
@@ -113,9 +115,11 @@ public class ProducerApplication implements CommandLineRunner {
     @SneakyThrows
     private void testSendDelay() {
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 1; i++) {
             String content = "我是一条延迟消息。sendTime@" + LocalDateTime.now();
-            SendResult sendResult = rocketMQTemplate.syncSend("topic-test-1", MessageBuilder.withPayload(content).build(), 3000L, MessageDelayLevel.DELAY_1_SECOND);
+            String s = StringUtils.rightPad(content, 1024 * 1024 * 4 - 1024, "$");
+            System.out.println("s.length: " + s.length());
+            SendResult sendResult = rocketMQTemplate.syncSend("topic-test-1", MessageBuilder.withPayload(s).build(), 3000L, MessageDelayLevel.DELAY_10_SECOND);
             log.info("== 发送延时消息 ==");
             log.info("状态:   {}", sendResult.getSendStatus());
             log.info("msgId: {}", sendResult.getMsgId());
@@ -136,15 +140,29 @@ public class ProducerApplication implements CommandLineRunner {
      * 在发送消息的时候，我们只要把 tags 使用 ":" 添加到 topic 后面就可以了。例如：topicName:tagName
      */
     private void testSendWithTag() {
-        for (int i = 1; i <= 5; i++) {
-            String tag = "tag" + i;
-            String content = "我是一条带有 " + tag + " 信息的消息。sendTime@" + LocalDateTime.now();
-            SendResult sendResult = rocketMQTemplate.syncSend("topic-test-tag:tag2", MessageBuilder.withPayload(content).build());
+
+
+        String tag1 = "ABCDEa123abc";
+        String tag2 = "ABCDFB123abc";
+
+        {
+            String content = "我是一条带有 " + tag1 + " 信息的消息。sendTime@" + LocalDateTime.now();
+            SendResult sendResult = rocketMQTemplate.syncSend("topic-test-tag:" + tag1, MessageBuilder.withPayload(content).build());
             log.info("== 发送带 tag 的消息 ==");
-            log.info("状态:   {}", sendResult.getSendStatus());
+            log.info("状态:   {}", sendResult);
             log.info("msgId: {}", sendResult.getMsgId());
         }
+        {
+            String content = "我是一条带有 " + tag2 + " 信息的消息。sendTime@" + LocalDateTime.now();
+            SendResult sendResult = rocketMQTemplate.syncSend("topic-test-tag:" + tag2, MessageBuilder.withPayload(content).build());
+            log.info("== 发送带 tag 的消息 ==");
+            log.info("状态:   {}", sendResult);
+            log.info("msgId: {}", sendResult.getMsgId());
+        }
+
+
     }
+
 
     private void testSendWithKey() {
         for (int i = 0; i < 5; i++) {

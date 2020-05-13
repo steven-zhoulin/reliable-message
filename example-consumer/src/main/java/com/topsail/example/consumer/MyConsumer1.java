@@ -16,7 +16,8 @@ public class MyConsumer1 implements RocketMQListener<String> {
 
     @Override
     public void onMessage(String message) {
-        log.info("received message: " + message);
+        log.info("received message, size=" + message.length());
+        //System.out.println(message);
     }
 
 }

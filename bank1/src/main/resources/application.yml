@@ -13,6 +13,7 @@ rocketmq:
   name-server: 10.13.3.13:9876
   producer.group: producer_bank1
 
+
 logging:
   level:
     root: info

@@ -44,9 +44,7 @@ public class ConsumerListener implements RocketMQListener<String>, RocketMQPushC
     public void prepareStart(DefaultMQPushConsumer consumer) {
 
         consumer.setConsumeMessageBatchMaxSize(1);
-
         consumer.registerMessageListener((MessageListenerConcurrently) (messageExts, context) -> {
-
             Assert.isTrue(messageExts.size() == 1, "ConsumeMessageBatchMaxSize != 1, curr = " + messageExts.size());
 
             // 消费消息
@@ -55,11 +53,10 @@ public class ConsumerListener implements RocketMQListener<String>, RocketMQPushC
             String topic = messageExt.getTopic();
             int reconsumeTimes = messageExt.getReconsumeTimes();
 
+            // 解析消息
+            AccountChangeEvent accountChangeEvent = MessageConvert.from(messageExt);
+
             try {
-
-                // 解析消息
-                AccountChangeEvent accountChangeEvent = MessageConvert.from(messageExt);
-
                 // 更新本地账户，增加金额
                 accountInfoService.addAccountInfoBalance(accountChangeEvent);
                 log.info("消费成功[第{}次重试], topic: {} key: {}", reconsumeTimes, topic, key);
@@ -70,7 +67,7 @@ public class ConsumerListener implements RocketMQListener<String>, RocketMQPushC
                 return ConsumeConcurrentlyStatus.RECONSUME_LATER;
             }
 
+
         });
     }
-
 }

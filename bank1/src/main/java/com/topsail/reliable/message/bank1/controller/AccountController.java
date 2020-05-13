@@ -49,7 +49,7 @@ public class AccountController {
 
         // 异步调用转账逻辑
         accountService.asyncUpdateAccountBalance(accountChangeEvent);
-        return "转账成功";
+        return "发起转账: " + accountChangeEvent;
     }
 
 }
