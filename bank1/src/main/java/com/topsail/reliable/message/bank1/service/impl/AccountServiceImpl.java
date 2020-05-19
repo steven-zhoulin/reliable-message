@@ -7,6 +7,7 @@ import com.topsail.reliable.message.bank1.service.AccountService;
 import com.topsail.reliable.message.bank1.service.DeDuplicateService;
 import com.topsail.reliable.message.core.Constants;
 import com.topsail.reliable.message.core.convert.MessageConvert;
+import com.topsail.reliable.message.core.entity.ExecuteStatus;
 import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import com.topsail.reliable.message.core.entity.po.Account;
 import com.topsail.reliable.message.core.entity.po.DeDuplicate;
@@ -49,8 +50,9 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         Message<String> message = MessageConvert.from(accountChangeEvent);
         String destination = Constants.TOPIC_BANK1_ACCOUNT_CHANGE + ":" + accountChangeEvent.getDstBank();
-        TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(Constants.PRODUCER_GROUP_BANK1, destination, message, null);
-
+        ExecuteStatus executeStatus = ExecuteStatus.builder().success(false).build();
+        TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(Constants.PRODUCER_GROUP_BANK1, destination, message, executeStatus);
+        log.info("本地事务执行成功与否: {}", executeStatus.getSuccess());
         log.info("topic: {} key: {}", Constants.TOPIC_BANK1_ACCOUNT_CHANGE, accountChangeEvent.getTransactionId());
         log.info("sendResult: {}", sendResult);
 

@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(consumerGroup = Constants.CONSUMER_GROUP_BANK2, topic = Constants.TOPIC_BANK1_ACCOUNT_CHANGE, selectorExpression = "bank2")
+@RocketMQMessageListener(consumerGroup = Constants.CONSUMER_GROUP_BANK2, topic = Constants.TOPIC_BANK1_ACCOUNT_CHANGE, selectorExpression = "bank1 | bank2")
 public class ConsumerListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
 
     @Autowired

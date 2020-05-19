@@ -142,8 +142,8 @@ public class ProducerApplication implements CommandLineRunner {
     private void testSendWithTag() {
 
 
-        String tag1 = "ABCDEa123abc";
-        String tag2 = "ABCDFB123abc";
+        String tag1 = "bank1";
+        String tag2 = "bank2";
 
         {
             String content = "我是一条带有 " + tag1 + " 信息的消息。sendTime@" + LocalDateTime.now();

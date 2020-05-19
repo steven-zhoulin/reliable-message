@@ -4,6 +4,7 @@ import com.topsail.reliable.message.bank1.service.AccountService;
 import com.topsail.reliable.message.bank1.service.DeDuplicateService;
 import com.topsail.reliable.message.core.Constants;
 import com.topsail.reliable.message.core.convert.MessageConvert;
+import com.topsail.reliable.message.core.entity.ExecuteStatus;
 import com.topsail.reliable.message.core.entity.event.AccountChangeEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
@@ -40,12 +41,15 @@ public class ProducerListener implements RocketMQLocalTransactionListener {
 
         AccountChangeEvent accountChangeEvent = MessageConvert.from(message);
         Object key = accountChangeEvent.getTransactionId();
+        ExecuteStatus executeStatus = (ExecuteStatus) arg;
 
         try {
             accountService.doExecuteLocalTransaction(accountChangeEvent, arg);
             log.info("Local transaction execute success, commit half message! key: {}", key);
+            executeStatus.setSuccess(true);
             return RocketMQLocalTransactionState.COMMIT;
         } catch (Exception e) {
+            executeStatus.setSuccess(false);
             log.error("Local transaction execute failure, rollback half message! key: {}", key);
             return RocketMQLocalTransactionState.ROLLBACK;
         }
